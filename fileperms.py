@@ -23,6 +23,8 @@ class Perms:
         for (dirpath, _, filenames) in walk(self.indir):
             self.flist.extend(['%s/%s' % (dirpath, filename)
                                for filename in filenames])
+        if len(self.flist) == 0: # Return an error if there are no files
+            return True
 
     def parse_perms(self):
         """Parses the files in flist for file perms"""
@@ -76,7 +78,10 @@ else:
     indir = argv[1]
 
 p = Perms(indir)
-p.get_files()
+err = p.get_files()
+if err:
+    print("No files found!")
+    exit(-1)
 p.parse_perms()
 readable, writable, executable = p.stats()
 
